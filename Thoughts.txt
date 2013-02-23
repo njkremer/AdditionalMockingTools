@@ -1,0 +1,12 @@
+* We're not really mocking the whole class here, we're really just doing a partial mock on the methods that you stub.
+* Because we're not really mocking the whole class, verify is a bit awkward... we can't just always "watch" all interations with the class since we're not mocking all the methods. So instead
+we have to specify what methods we want to expect. We can also expect any method that is stubbed, but this COULD be redundant see -> (http://monkeyisland.pl/2008/04/26/asking-and-telling/)
+* Maybe check into not using exceptions since the SenTest framework kind of acts odd with them, not showing the specific test it errored in.
+* Future additions:
+    * Parameter matching/verification
+    * Verify methods NEVER run
+    * Verify methods run at least # of times (>=)
+    * Verify methods run no more than # of times (<)
+
+Needs to happen now:
+    * Copy the headers into a Headers director. Maybe make a /lib dir and in there have the "Headers" folder and the .a file

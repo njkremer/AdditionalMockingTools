@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Scheme
+   LastUpgradeVersion = "0450"
+   version = "1.7">
+   <BuildAction
+      parallelizeBuildables = "YES"
+      buildImplicitDependencies = "YES">
+      <PostActions>
+         <ExecutionAction
+            ActionType = "Xcode.IDEStandardExecutionActionsCore.ExecutionActionType.ShellScriptAction">
+            <ActionContent
+               title = "Run Script"
+               scriptText = "exec &gt; $SRCROOT/AMT-Build.log 2&gt;&amp;1&#10;cd $SRCROOT&#10;&#10;echo &quot;Clean and build for simulator&quot;&#10;xcodebuild -configuration Release -sdk iphonesimulator$IPHONEOS_DEPLOYMENT_TARGET clean SYMROOT=$BUILD_ROOT;&#10;xcodebuild -configuration Release -sdk iphonesimulator$IPHONEOS_DEPLOYMENT_TARGET -alltargets SYMROOT=$BUILD_ROOT;&#10;&#10;echo &quot;Clean and build for device&quot;&#10;xcodebuild -configuration Release -sdk iphoneos$IPHONEOS_DEPLOYMENT_TARGET clean SYMROOT=$BUILD_ROOT;&#10;xcodebuild -configuration Release -sdk iphoneos$IPHONEOS_DEPLOYMENT_TARGET -alltargets SYMROOT=$BUILD_ROOT;&#10;&#10;&#10;echo &quot;Make a fat .a library file&quot;&#10;lipo &quot;$BUILD_DIR/Release-iphoneos/libAdditionalMockingTools.a&quot; &quot;$BUILD_DIR/Release-iphonesimulator/libAdditionalMockingTools.a&quot; -create -output &quot;$SRCROOT/libAdditionalMockingTools.a&quot;"
+               shellToInvoke = "/bin/sh">
+               <EnvironmentBuildable>
+                  <BuildableReference
+                     BuildableIdentifier = "primary"
+                     BlueprintIdentifier = "019577F316937A7F00EB06C5"
+                     BuildableName = "libAdditionalMockingTools.a"
+                     BlueprintName = "AdditionalMockingTools"
+                     ReferencedContainer = "container:AdditionalMockingTools.xcodeproj">
+                  </BuildableReference>
+               </EnvironmentBuildable>
+            </ActionContent>
+         </ExecutionAction>
+      </PostActions>
+      <BuildActionEntries>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "YES"
+            buildForProfiling = "YES"
+            buildForArchiving = "YES"
+            buildForAnalyzing = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "019577F316937A7F00EB06C5"
+               BuildableName = "libAdditionalMockingTools.a"
+               BlueprintName = "AdditionalMockingTools"
+               ReferencedContainer = "container:AdditionalMockingTools.xcodeproj">
+            </BuildableReference>
+         </BuildActionEntry>
+      </BuildActionEntries>
+   </BuildAction>
+   <TestAction
+      selectedDebuggerIdentifier = "Xcode.DebuggerFoundation.Debugger.LLDB"
+      selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
+      shouldUseLaunchSchemeArgsEnv = "YES"
+      buildConfiguration = "Debug">
+      <Testables>
+         <TestableReference
+            skipped = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "0195780416937A7F00EB06C5"
+               BuildableName = "AdditionalMockingToolsTests.octest"
+               BlueprintName = "AdditionalMockingToolsTests"
+               ReferencedContainer = "container:AdditionalMockingTools.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
+      </Testables>
+   </TestAction>
+   <LaunchAction
+      selectedDebuggerIdentifier = "Xcode.DebuggerFoundation.Debugger.LLDB"
+      selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
+      launchStyle = "0"
+      useCustomWorkingDirectory = "NO"
+      buildConfiguration = "Debug"
+      ignoresPersistentStateOnLaunch = "NO"
+      debugDocumentVersioning = "YES"
+      allowLocationSimulation = "YES">
+      <AdditionalOptions>
+      </AdditionalOptions>
+   </LaunchAction>
+   <ProfileAction
+      shouldUseLaunchSchemeArgsEnv = "YES"
+      savedToolIdentifier = ""
+      useCustomWorkingDirectory = "NO"
+      buildConfiguration = "Release"
+      debugDocumentVersioning = "YES">
+   </ProfileAction>
+   <AnalyzeAction
+      buildConfiguration = "Debug">
+   </AnalyzeAction>
+   <ArchiveAction
+      buildConfiguration = "Release"
+      revealArchiveInOrganizer = "YES">
+   </ArchiveAction>
+</Scheme>
