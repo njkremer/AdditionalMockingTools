@@ -220,4 +220,33 @@
     STAssertThrows([mock verify], @"The verify method should throw an exception");
 }
 
+- (void)testBothStubbingAndVerifyingAMethod {
+    id mock = [AMTClassMock mock:[AMTTestClass class]];
+    [mock when:[mock methodWithNoParams] thenReturn:@"not okay"];
+    
+    STAssertEqualObjects([AMTTestClass methodWithNoParams], @"not okay", nil);
+    
+    [mock expect:[mock methodWithNoParams]];
+    
+    STAssertEqualObjects([AMTTestClass methodWithNoParams], @"not okay", nil);
+    
+    [mock verify];
+}
+
+- (void)testVerifyMockingIsRemovedAfterResettingWhenbothStubbingAndVerifingAMethod {
+    STAssertEqualObjects([AMTTestClass methodWithNoParams], @"okay", nil);
+    
+    id mock = [AMTClassMock mock:[AMTTestClass class]];
+    [mock when:[mock methodWithNoParams] thenReturn:@"not okay"];
+    [mock expect:[mock methodWithNoParams]];
+    
+        
+    STAssertEqualObjects([AMTTestClass methodWithNoParams], @"not okay", nil);
+    
+    [mock removeMocking];
+    
+    STAssertEqualObjects([AMTTestClass methodWithNoParams], @"okay", nil);
+    
+}
+
 @end

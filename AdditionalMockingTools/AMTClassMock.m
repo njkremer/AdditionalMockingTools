@@ -36,15 +36,16 @@ static __strong NSMutableDictionary *_classCores;
     NSString *cmdString = NSStringFromSelector(cmd);
     AMTClassMockCore *core = [AMTClassMock coreForClass:class];
     
-    BOOL methodIsExpectedAndNotStubbed = [core.expectedMethods objectForKey:cmdString] != nil;
-    if(methodIsExpectedAndNotStubbed) {
+    BOOL methodIsStubbed = [[core.returnValues allKeys] containsObject:cmdString];
+    BOOL methodIsExpected = [core.expectedMethods objectForKey:cmdString] != nil;
+    if(methodIsExpected) {
         NSNumber *verifiedCount = [core.verifiedMethods objectForKey:cmdString];
         verifiedCount = [NSNumber numberWithInt:[verifiedCount intValue] + 1];
         [core.verifiedMethods setObject:verifiedCount forKey:cmdString];
     }
     
-    BOOL methodMockedIsSupposedToDoNothing = [core.doNothingMethods containsObject:cmdString] || methodIsExpectedAndNotStubbed;
-    if(methodMockedIsSupposedToDoNothing) {
+    BOOL methodMockedIsSupposedToDoNothing = [core.doNothingMethods containsObject:cmdString];
+    if(methodMockedIsSupposedToDoNothing || (methodIsExpected && !methodIsStubbed)) {
         return nil;
     }
     
@@ -131,23 +132,26 @@ static __strong NSMutableDictionary *_classCores;
     AMTClassMockCore *core = [AMTClassMock coreForClass:self.mockedClass];
     
     for(NSString *selectorName in core.orignalMethods) {
-        
-        // Get the original method back
-        NSValue *boxedOriginalMethod = [core.orignalMethods objectForKey:selectorName];
-        Method originalMethod;
-        [boxedOriginalMethod getValue:&originalMethod];
-        
-        // Get the original implementation back
-        NSValue *boxedOriginalImp = [core.orignalImplementations objectForKey:selectorName];
-        IMP originalImp;
-        [boxedOriginalImp getValue:&originalImp];
-        
-        // put back the original implementation for the method
-        method_setImplementation(originalMethod, originalImp);
+        [self removeMockingForASelector:selectorName inCore:core];
     }
     
     [core reset];
     [_classCores removeObjectForKey:[self.mockedClass description]];
+}
+
+- (void)removeMockingForASelector:(NSString *)selectorName inCore:(AMTClassMockCore *)core{
+    // Get the original method back
+    NSValue *boxedOriginalMethod = [core.orignalMethods objectForKey:selectorName];
+    Method originalMethod;
+    [boxedOriginalMethod getValue:&originalMethod];
+    
+    // Get the original implementation back
+    NSValue *boxedOriginalImp = [core.orignalImplementations objectForKey:selectorName];
+    IMP originalImp;
+    [boxedOriginalImp getValue:&originalImp];
+    
+    // put back the original implementation for the method
+    method_setImplementation(originalMethod, originalImp);
 }
 
 - (void)setupMocking:(SEL)methodSelector {
@@ -156,6 +160,11 @@ static __strong NSMutableDictionary *_classCores;
     self.currentMockingSelector = NSStringFromSelector(methodSelector);
     
     AMTClassMockCore *core = [AMTClassMock coreForClass:self.mockedClass];
+    
+    BOOL methodHasAlreadyBeenMocked = [[core.orignalImplementations allKeys] containsObject:self.currentMockingSelector];
+    if(methodHasAlreadyBeenMocked) {
+        [self removeMockingForASelector:self.currentMockingSelector inCore:core];
+    }
     
     // Get the original method and save it off
     Method originalMethod = class_getClassMethod(self.mockedClass, methodSelector);
