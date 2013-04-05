@@ -15,7 +15,7 @@
 - (void)when:(id)method thenReturn:(id)value;
 - (void)whenSelector:(SEL)selector thenReturn:(id)value;
 
-- (AMTClassMock *)doNothingFor;
+- (id)doNothingFor;
 - (void)doNothingForSeletor:(SEL)selector;
 
 - (void)expect:(id)method toBeExecutedNumberOfTimes:(int)times;

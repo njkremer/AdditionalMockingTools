@@ -83,7 +83,7 @@ static __strong NSMutableDictionary *_classCores;
     // figure something out.
 }
 
-- (AMTClassMock *)doNothingFor {
+- (id)doNothingFor {
     self.currentMockingSelectorDoesNothing = YES;
     return self;
 }

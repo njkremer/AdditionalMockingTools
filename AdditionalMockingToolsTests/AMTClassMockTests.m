@@ -96,7 +96,7 @@
 
 - (void)testMockingAClassWithAVoidMethod {
     id mock = [AMTClassMock mock:[AMTTestClass class]];
-    [(id)[mock doNothingFor] voidMethod];
+    [[mock doNothingFor] voidMethod];
     
     // if no exception is raised, then the test should pass
     [AMTTestClass voidMethod];
