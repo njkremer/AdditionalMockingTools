@@ -30,7 +30,7 @@ Stubbing class methods is pretty straight forward. is starts with creating a moc
 id mock = [AMTClassMock mock:[SomeClass class]];
 ```
 
-From here you can call the `when:thenReturn` method off of the mocked representation object:
+From here you can call the `when:thenReturn:` method off of the mocked representation object:
 
 ```objc
 [mock when:[mock someMethod] thenReturn:@"stubbed value"];
@@ -39,7 +39,7 @@ From here you can call the `when:thenReturn` method off of the mocked representa
 So now when `[SomeClass someMethod]` is called then the string "stubbed value" will be returned.
 
 ### Stubbing with Selectors
-In addition to using the `when:thenReturn` way of stubbing you can stub using a `@selector` as well:
+In addition to using the `when:thenReturn:` way of stubbing you can stub using a `@selector` as well:
 
 ```objc
 [mock whenSelector:@selector(someMethod) thenReturn:@"stubbed value"];
