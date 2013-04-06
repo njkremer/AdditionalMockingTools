@@ -9,6 +9,8 @@
 # For updates, see: http://stackoverflow.com/questions/49478/git-ignore-file-for-xcode-projects
 #########################
 
+AMT-Build.log
+
 #####
 # OS X temporary files that should never be committed
 
