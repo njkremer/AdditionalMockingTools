@@ -142,10 +142,75 @@ which does not seem to be able to mocked with other mocking frameworks that I've
 
 ### Mocking NSURLConnection's Synchronous Method
 
+To stub `[NSURLConnection sendSynchronousRequest:returningResponse:error:]` use the following code snippet as an example:
 
+```objc
+NSHTTPURLResponse *testResponse = [[NSHTTPURLResponse alloc] initWithURL:[NSURL URLWithString:@"test"]
+                                                                  statusCode:200 HTTPVersion:@"HTTP/1.1"
+                                                                headerFields:nil];
+NSData *testData = [@"test" dataUsingEncoding:NSUTF8StringEncoding];
+    
+AMTNSURLConnectionMock *mock = [AMTNSURLConnectionMock mock];
+[mock mockSendSynchronousRequestWithOutParameterResponse:testResponse error:nil andReturningData:testData];
+```
+
+This allows you to specify the out parameter that is the `returningResponse` pass-by-reference parameter of the call. 
+The returning data portion is just what it seems, the data that is to be returned by the call.
+
+**Note:** This will only mock the **next one** call to `[NSURLConnection sendSynchronousRequest:returningResponse:error:]`. You may
+call `mockSendSynchronousRequestWithOutParameterResponse:error:andReturningData:` as many times as you'd like though
+to mock subsequent calls.
+
+So the next time the following is called: 
+
+```objc
+NSHTTPURLResponse *verificationResponse;
+NSError *verificationError;
+NSData *verificationData = [NSURLConnection sendSynchronousRequest:nil returningResponse:&verificationResponse error:&verificationError];
+```
+`verificationData` will be the `testData`, `verificationResponse` will be the `testResponse`, and `verificationError` will be nil
+based the previous code example.
+
+You can also verify the request that is sent in as the `sendSynchronousRequest` parameter using the following method:
+
+```objc
+NSURLRequest *request = [mock requestForMockInvocationNumber:0]
+```
+
+Where the invocation number is based on how many times the mock object had `mockSendSynchronousRequestWithOutParameterResponse:error:andReturningData:` called to it.
 
 ### Mocking NSURLConnection's Asynchronous Callback Method
 
+To stub the callback block to `[NSURLConnection sendAsynchronousRequest:queue:completionHandler:^(NSURLResponse *response, NSData *data, NSError *error)]` 
+you can do the following:
+
+```objc
+    NSHTTPURLResponse *testResponse = [[NSHTTPURLResponse alloc] initWithURL:[NSURL URLWithString:@"test"]
+                                                                  statusCode:200 HTTPVersion:@"HTTP/1.1"
+                                                                headerFields:nil];
+    NSData *testData = [@"test" dataUsingEncoding:NSUTF8StringEncoding];
+    
+    AMTNSURLConnectionMock *mock = [AMTNSURLConnectionMock mock];
+    [mock mockAsyncRquestCompletionBlockWithResponse:testResponse data:testData error:nil];
+```
+
+This example is a little more extensive. When you call `mockAsyncRquestCompletionBlockWithResponse:data:error:` you're specifying the
+parameters that are *passed to the callback block*. Since it would be expected that you'd have logic in callback block to do
+something based on the response that would be received from the server, you can fake out the server part by stubbing the 
+expected response.
+
+**Note:** This will only mock the **next one** call to `[NSURLConnection sendAsynchronousRequest:queue:completionHandler:^(NSURLResponse *response, NSData *data, NSError *error)]`.
+You may call `mockAsyncRquestCompletionBlockWithResponse:data:error:` as many times as you'd like though
+to mock subsequent calls.
+
+You can also retrieve the `NSURLRequest` that is passed into `sendAsynchronousRequest:queue:completionHandler:` using the 
+same method as outline for `mockSendSynchronousRequestWithOutParameterResponse:error:andReturningData:`:
+
+```objc
+NSURLRequest *request = [mock requestForMockInvocationNumber:0]
+```
+
+Where the invocation number is based on how many times the mock object had `mockSendSynchronousRequestWithOutParameterResponse:error:andReturningData:` called to it.
 
 <a name="additionalNotes"></a>
 # Additional Notes
@@ -165,6 +230,16 @@ it would still succeed verification.
 
 <a name="futureTODOs"></a>
 # Future TODOs
+
+This is a list of things I'd like to add to the library, in no particular order:
+
+* Parameter matching/verification
+* Verify methods NEVER run
+* Verify methods run at least # of times (>=)
+* Verify methods run no more than # of times (<)
+* Add support for NoExpectedExecutions
+* Leverage SenTest's `failureInFile:AtLine:withDescription` if AMT is being used with SenTest
+* Generically support data returned via pass-by-reference "out" parameters
 
 <a name="license"></a>
 # License
